@@ -77,6 +77,7 @@ local COLOR_DANGERFG = COLOR_BLACK
 local COLOR_HIGHLIGHTBG = {60, 90, 100}
 local COLOR_HIGHLIGHTFG = COLOR_WHITE
 
+-- Key Combinations or Keycodes
 local KEY_ESCAPE = 27
 local KEY_SPACE = 32
 local KEY_UP = 30064
@@ -98,10 +99,11 @@ local KEY_F3 = 26163
 
 local MOUSE_LEFT_BTN = 1
 
+-- position / sizes
 local PADDING = 3
 local MARGIN = 10
 local HALF_MARGIN = 5
-local LIST_START = 50
+local LIST_START = 55
 
 local EXT_SECTION = 'cfillion_song_switcher'
 local EXT_SWITCH_MODE = 'onswitch'
@@ -296,14 +298,14 @@ function setCurrentIndex(index)
     end
   end
 
--- I added this code to send a midi message for every song choice to the virtual keyboard
-  local virtualKeyboardMode = 0
-  local channel = getCurrentNoteChannel()
-  local noteOnCommand = 0x90 + channel
-  local velocity = 96
+  -- I added this code to send a midi message for every song choice to the virtual keyboard
+    local virtualKeyboardMode = 0
+    local channel = getCurrentNoteChannel()
+    local noteOnCommand = 0x90 + channel
+    local velocity = 96
 
-  playMidiNoteForSong(virtualKeyboardMode, noteOnCommand, currentIndex, velocity)
--- end code addition
+    playMidiNoteForSong(virtualKeyboardMode, noteOnCommand, currentIndex, velocity)
+  -- end code addition
 
   reaper.PreventUIRefresh(-1)
 
@@ -433,6 +435,7 @@ function textLine(text, x, padding)
     x = math.max(0, (gfx.w - w) / 2)
   end
 
+  -- textX, textY, textWidth
   local tx, ty, tw = x, y, w
 
   if padding ~= nil then
@@ -577,6 +580,25 @@ function resetButton()
   if button(btn, false, false, true) then
     reset()
   end
+end
+
+-- Custom Button
+function midiNoteButton()
+  local songIndex = songs[currentIndex].midiNote
+  gfx.setfont(FONT_DEFAULT)
+  gfx.x = 0
+  gfx.y = 0
+
+  btn = textLine('Midi Note:  ' .. songIndex .. ' / ' .. getNoteName(songIndex))
+  btn.rect.w = btn.tw
+  btn.rect.x = btn.tx
+
+  --'Midi Note:  ' .. songs[currentIndex].midiNote,
+  --'Midi Note Name:  ' .. getNoteName(songs[currentIndex].midiNote)
+  if button(btn, false, false, true) then
+    repeatSongatIndex()
+  end
+
 end
 
 function switchModeButton()
@@ -879,6 +901,7 @@ function loop()
     helpButton()
     dockButton()
     resetButton()
+    midiNoteButton()
 
     gfx.setfont(FONT_LARGE)
   else
