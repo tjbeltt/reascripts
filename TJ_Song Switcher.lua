@@ -103,7 +103,7 @@ local MOUSE_LEFT_BTN = 1
 local PADDING = 3
 local MARGIN = 10
 local HALF_MARGIN = 5
-local LIST_START = 55
+local LIST_START = 60
 
 local EXT_SECTION = 'cfillion_song_switcher'
 local EXT_SWITCH_MODE = 'onswitch'
@@ -584,12 +584,20 @@ end
 
 -- Custom Button
 function midiNoteButton()
-  local songIndex = songs[currentIndex].midiNote
+  local songIndex = 0
+  if songs[currentIndex] ~= nil then
+    songIndex = songs[currentIndex].midiNote
+  end
   gfx.setfont(FONT_DEFAULT)
   gfx.x = 0
-  gfx.y = 0
+  gfx.y = 4
 
-  btn = textLine('Midi Note:  ' .. songIndex .. ' / ' .. getNoteName(songIndex))
+  if songs[currentIndex] == nil then
+    btn = textLine('---')
+  else
+    btn = textLine('Midi Note:  ' .. songIndex .. ' / ' .. getNoteName(songIndex))
+  end
+
   btn.rect.w = btn.tw
   btn.rect.x = btn.tx
 
